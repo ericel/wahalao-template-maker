@@ -1,0 +1,36 @@
+name: Validate template maker and owned templates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v6.3.0
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --disable-pip-version-check -r requirements-dev.txt
+      - run: python -m pytest
+      - run: python -m compileall -q templates/sports-live-scores/src scripts
+      - name: Validate owned source build
+        run: |
+          docker build \
+            --build-arg "SOURCE_COMMIT=${GITHUB_SHA}" \
+            --build-arg "TEMPLATE_VERSION=2.0.0" \
+            --tag "weynear/sports-live-scores:validation" \
+            templates/sports-live-scores
