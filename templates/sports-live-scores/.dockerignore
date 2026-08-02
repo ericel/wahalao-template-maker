@@ -1,0 +1,6 @@
+*
+!Dockerfile
+!src/
+!src/sports_live_scores/
+!src/sports_live_scores/main.py
+!src/sports_live_scores/__init__.py
