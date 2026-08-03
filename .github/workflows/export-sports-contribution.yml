@@ -2,6 +2,10 @@ name: Export sports recipe contribution
 
 on:
   workflow_dispatch:
+    inputs:
+      submission_id:
+        description: Opaque app-owned submission ID from the Automations console
+        required: true
 
 permissions:
   contents: read
@@ -21,7 +25,7 @@ jobs:
         run: |
           docker build \
             --build-arg "SOURCE_COMMIT=${GITHUB_SHA}" \
-            --build-arg "TEMPLATE_VERSION=2.0.0" \
+            --build-arg "TEMPLATE_VERSION=2.1.0" \
             --tag "weynear/sports-live-scores:contribution-check" \
             templates/sports-live-scores
       - name: Export source recipe
@@ -29,6 +33,7 @@ jobs:
           mkdir -p contribution
           python scripts/prepare_sports_contribution.py \
             --source-commit "${GITHUB_SHA}" \
+            --submission-id "${{ inputs.submission_id }}" \
             --destination-root contribution
       - uses: actions/upload-artifact@v6
         with:

@@ -31,6 +31,6 @@ jobs:
         run: |
           docker build \
             --build-arg "SOURCE_COMMIT=${GITHUB_SHA}" \
-            --build-arg "TEMPLATE_VERSION=2.0.0" \
+            --build-arg "TEMPLATE_VERSION=2.1.0" \
             --tag "weynear/sports-live-scores:validation" \
             templates/sports-live-scores

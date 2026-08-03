@@ -4,7 +4,7 @@ A local authoring workbench for building automation recipe bundles before propos
 
 This repository also owns the source and reproducible build definition for the next
 `weynear/sports-live-scores` release. Approved `1.x` releases remain immutable
-and continue to point to `wahalao-automation`; ownership transfers with `2.0.0`.
+and continue to point to `wahalao-automation`; the first app-scoped release is `2.1.0`.
 
 ## What the scaffold provides
 
@@ -17,6 +17,19 @@ and continue to point to `wahalao-automation`; ownership transfers with `2.0.0`.
 - generated `template.yaml`, `manifest.yaml`, and `README.md` starter files.
 
 This app intentionally does not store secrets, credentials, user IDs, bot IDs, recipient lists, or application IDs.
+
+## Private submission workflow
+
+1. Open `/developer/messaging#automations`, select the owning application, and
+   create a private template submission.
+2. Copy the opaque `atsub_...` identifier into Template Maker. It contains no
+   credentials or tenant IDs; Automation retains the authoritative app binding.
+3. Export the recipe and open a pull request against `weynear-templates`.
+4. After review, central build, signing, and publication, the template appears
+   only in the owning application's Automations catalog.
+
+Every version requires a new submission. Do not reuse a submission across
+applications or template versions.
 
 ## Run locally
 
@@ -41,11 +54,11 @@ npm run build
 templates/sports-live-scores/
   src/sports_live_scores/       capability-bound source
   tests/                        source contract tests
-  recipe/2.0.0/                 next immutable registry candidate
+  recipe/2.1.0/                 next immutable registry candidate
   Dockerfile                    OCI artifact definition
 .github/workflows/
   validate.yml                         app and source validation
-  export-sports-contribution.yml       credential-free recipe export
+  export-sports-contribution.yml       credential-free, submission-bound recipe export
 ```
 
 This repository needs no Weynear credentials. Its export workflow pins the
@@ -58,7 +71,8 @@ The current `sports-live-scores-v1` runtime adapter remains in
 source ownership; it can continue loading the new signed artifact without
 rewriting approved historical recipes.
 
-After exporting a recipe, unpack it into a clean branch of `weynear-templates`
+Run the export workflow with the owning app's opaque `atsub_...` identifier.
+After exporting the resulting recipe, unpack it into a clean branch of `weynear-templates`
 and run the upstream validation. The contribution intentionally has no artifact
 digest; the central index supplies it after review:
 

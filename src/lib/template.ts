@@ -4,6 +4,7 @@ export type TemplateDraft = {
   api_version: "registry.automations.weynear.com/v1";
   kind: "AutomationTemplate";
   metadata: {
+    submission_id: string;
     publisher: string;
     name: string;
     version: string;
@@ -69,6 +70,7 @@ export const initialDraft: TemplateDraft = {
   api_version: "registry.automations.weynear.com/v1",
   kind: "AutomationTemplate",
   metadata: {
+    submission_id: "",
     publisher: "weynear",
     name: "new-template",
     version: "0.1.0",
@@ -108,6 +110,12 @@ export const initialDraft: TemplateDraft = {
 
 export function validateDraft(draft: TemplateDraft): ValidationItem[] {
   return [
+    {
+      id: "submission",
+      label: "Private app submission",
+      detail: "Use the opaque submission ID created in the Wahalao developer console.",
+      valid: /^atsub_[a-f0-9]{32}$/.test(draft.metadata.submission_id),
+    },
     {
       id: "identity",
       label: "Registry identity",

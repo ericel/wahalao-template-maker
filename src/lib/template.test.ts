@@ -11,9 +11,9 @@ describe("template authoring", () => {
     expect(recipePath(initialDraft)).toBe("registry/recipes/weynear/new-template/0.1.0");
   });
 
-  it("keeps the placeholder source commit out of ready state", () => {
+  it("requires a console-issued submission and real source commit", () => {
     const failed = validateDraft(initialDraft).filter((item) => !item.valid);
 
-    expect(failed.map((item) => item.id)).toEqual(["source"]);
+    expect(failed.map((item) => item.id)).toEqual(["submission", "source"]);
   });
 });

@@ -11,7 +11,14 @@ export function parseTemplate(source: string): TemplateDraft {
   if (!parsed || typeof parsed !== "object") {
     throw new Error("Template YAML must contain an object.");
   }
-  return parsed as TemplateDraft;
+  const draft = parsed as TemplateDraft;
+  return {
+    ...draft,
+    metadata: {
+      ...draft.metadata,
+      submission_id: draft.metadata?.submission_id ?? "",
+    },
+  };
 }
 
 export function createManifest(draft: TemplateDraft): string {

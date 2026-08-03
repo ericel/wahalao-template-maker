@@ -1,7 +1,7 @@
 FROM scratch
 
 ARG SOURCE_COMMIT
-ARG TEMPLATE_VERSION=2.0.0
+ARG TEMPLATE_VERSION=2.1.0
 
 LABEL org.opencontainers.image.title="Weynear Live Sports Scores"
 LABEL org.opencontainers.image.description="Capability-bound Weynear automation template"
