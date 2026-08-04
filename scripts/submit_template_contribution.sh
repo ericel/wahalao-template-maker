@@ -63,7 +63,14 @@ echo "Preparing ${TEMPLATE_NAME}@${TEMPLATE_VERSION} from ${SOURCE_COMMIT}..."
 echo "Creating a clean Weynear Templates contribution branch..."
 git -c credential.helper='!gh auth git-credential' clone --quiet \
   "https://github.com/${INDEX_REPOSITORY}.git" "$INDEX_ROOT"
-git -C "$INDEX_ROOT" switch -c "$SUBMISSION_BRANCH" origin/main
+if git -C "$INDEX_ROOT" show-ref --verify --quiet \
+  "refs/remotes/origin/${SUBMISSION_BRANCH}"; then
+  echo "Resuming existing contribution branch ${SUBMISSION_BRANCH}..."
+  git -C "$INDEX_ROOT" switch -c "$SUBMISSION_BRANCH" \
+    --track "origin/${SUBMISSION_BRANCH}"
+else
+  git -C "$INDEX_ROOT" switch -c "$SUBMISSION_BRANCH" origin/main
+fi
 rsync -a "$EXPORT_ROOT/registry/" "$INDEX_ROOT/registry/"
 if ! grep -q '"placeholder"' "$INDEX_ROOT/schemas/template.schema.json"; then
   git -C "$INDEX_ROOT" apply \
@@ -89,16 +96,26 @@ fi
 git -C "$INDEX_ROOT" add \
   "registry/recipes/weynear/${TEMPLATE_NAME}/${TEMPLATE_VERSION}" \
   "schemas/template.schema.json"
-git -C "$INDEX_ROOT" commit -m "Submit ${TEMPLATE_NAME} ${TEMPLATE_VERSION}"
+if git -C "$INDEX_ROOT" diff --cached --quiet; then
+  echo "The contribution branch already contains this exact recipe."
+else
+  git -C "$INDEX_ROOT" commit -m "Update ${TEMPLATE_NAME} ${TEMPLATE_VERSION} source"
+fi
 git -C "$INDEX_ROOT" -c credential.helper='!gh auth git-credential' \
   push -u origin "$SUBMISSION_BRANCH"
 
-PR_URL="$(gh pr create \
+PR_URL="$(gh pr view "$SUBMISSION_BRANCH" \
   --repo "$INDEX_REPOSITORY" \
-  --base main \
-  --head "$SUBMISSION_BRANCH" \
-  --title "Submit ${TEMPLATE_NAME} ${TEMPLATE_VERSION}" \
-  --body "Private app-owned template submission for \`weynear/${TEMPLATE_NAME}@${TEMPLATE_VERSION}\` from \`https://github.com/${SOURCE_REPOSITORY}@${SOURCE_COMMIT}\`. The source contains no credentials or tenant identifiers and passed the upstream catalog and adversarial tests.")"
+  --json url \
+  --jq '.url' 2>/dev/null || true)"
+if [[ -z "$PR_URL" ]]; then
+  PR_URL="$(gh pr create \
+    --repo "$INDEX_REPOSITORY" \
+    --base main \
+    --head "$SUBMISSION_BRANCH" \
+    --title "Submit ${TEMPLATE_NAME} ${TEMPLATE_VERSION}" \
+    --body "Private app-owned template submission for \`weynear/${TEMPLATE_NAME}@${TEMPLATE_VERSION}\` from \`https://github.com/${SOURCE_REPOSITORY}@${SOURCE_COMMIT}\`. The source contains no credentials or tenant identifiers and passed the upstream catalog and adversarial tests.")"
+fi
 
 echo
 echo "Submitted successfully: $PR_URL"
