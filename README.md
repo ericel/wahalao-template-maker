@@ -2,9 +2,8 @@
 
 A local authoring workbench for building automation recipe bundles before proposing them to [`weynear-templates`](https://github.com/ericel/weynear-templates).
 
-This repository also owns the source and reproducible build definition for the next
-`weynear/sports-live-scores` release. Approved `1.x` releases remain immutable
-and continue to point to `wahalao-automation`; the first app-scoped release is `2.1.0`.
+This repository owns multiple source templates and their reproducible build
+definitions, including live sports scores and RSS/Atom news publishing.
 
 ## What the scaffold provides
 
@@ -48,13 +47,18 @@ npm run build
 .venv/bin/python -m pytest
 ```
 
-## Owned sports template
+## Owned templates
 
 ```text
 templates/sports-live-scores/
   src/sports_live_scores/       capability-bound source
   tests/                        source contract tests
-  recipe/2.1.0/                 next immutable registry candidate
+  recipe/2.2.0/                 next immutable registry candidate
+  Dockerfile                    OCI artifact definition
+templates/news-feed-publisher/
+  src/news_feed_publisher/      canonical-link publishing source
+  tests/                        source contract tests
+  recipe/1.0.0/                 first private registry candidate
   Dockerfile                    OCI artifact definition
 .github/workflows/
   validate.yml                         app and source validation
@@ -71,15 +75,17 @@ The current `sports-live-scores-v1` runtime adapter remains in
 source ownership; it can continue loading the new signed artifact without
 rewriting approved historical recipes.
 
-Run the export workflow with the owning app's opaque `atsub_...` identifier.
-After exporting the resulting recipe, unpack it into a clean branch of `weynear-templates`
-and run the upstream validation. The contribution intentionally has no artifact
-digest; the central index supplies it after review:
+After committing the app-owned `submission_id` and pushing the source commit,
+submit the recipe with one command:
 
 ```bash
-cd /Users/ojobasi/dev/weynear-templates
-.venv/bin/python scripts/build_catalog.py --check
-.venv/bin/python -m pytest -q
+npm run submit:sports
+npm run submit:news
 ```
+
+The command verifies that the source commit is pushed, prepares the immutable
+recipe, creates a clean `weynear-templates` branch, validates it, pushes it, and
+opens the pull request using the developer's existing `gh` login. It stores no
+GitHub, Artifact Registry, KMS, or index credentials in this repository.
 
 The browser preflight is an authoring aid; the upstream JSON Schema and CI remain authoritative.

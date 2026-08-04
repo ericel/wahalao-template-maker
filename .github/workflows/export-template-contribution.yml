@@ -1,0 +1,57 @@
+name: Export template contribution
+
+on:
+  workflow_dispatch:
+    inputs:
+      template_name:
+        description: Owned template identifier
+        required: true
+        type: choice
+        options:
+          - sports-live-scores
+          - news-feed-publisher
+      version:
+        description: Immutable semantic version (blank selects latest)
+        required: false
+      submission_id:
+        description: Opaque app-owned submission ID from the Automations console
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --disable-pip-version-check -r requirements-dev.txt
+      - run: python -m pytest
+      - name: Build source artifact without credentials
+        run: |
+          docker build \
+            --build-arg "SOURCE_COMMIT=${GITHUB_SHA}" \
+            --build-arg "TEMPLATE_VERSION=${{ inputs.version || 'candidate' }}" \
+            --tag "weynear/${{ inputs.template_name }}:contribution-check" \
+            "templates/${{ inputs.template_name }}"
+      - name: Export source recipe
+        run: |
+          args=(
+            --template-name "${{ inputs.template_name }}"
+            --source-commit "${GITHUB_SHA}"
+            --submission-id "${{ inputs.submission_id }}"
+            --destination-root contribution
+          )
+          if [[ -n "${{ inputs.version }}" ]]; then
+            args+=(--version "${{ inputs.version }}")
+          fi
+          python scripts/prepare_contribution.py "${args[@]}"
+      - uses: actions/upload-artifact@v6
+        with:
+          name: ${{ inputs.template_name }}-contribution-${{ github.sha }}
+          path: contribution/
+          if-no-files-found: error

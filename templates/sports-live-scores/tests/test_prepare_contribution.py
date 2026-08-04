@@ -19,6 +19,14 @@ def test_contribution_pins_source_without_registry_artifact(tmp_path):
     assert "artifact" not in template["spec"]
 
 
+def test_contribution_uses_submission_id_from_owned_recipe(tmp_path):
+    output = prepare_contribution("b" * 40, None, tmp_path)
+
+    template = yaml.safe_load((output / "template.yaml").read_text())
+    assert template["metadata"]["submission_id"].startswith("atsub_")
+    assert template["spec"]["source"]["commit"] == "b" * 40
+
+
 def test_contribution_rejects_placeholder_source_identity(tmp_path):
     with pytest.raises(ValueError, match="placeholder SHA"):
         prepare_contribution("0" * 40, SUBMISSION_ID, tmp_path)

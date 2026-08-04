@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "submit": "bash scripts/submit_template_contribution.sh",
+    "submit:sports": "npm run submit -- sports-live-scores",
+    "submit:news": "npm run submit -- news-feed-publisher",
     "test": "vitest run",
     "test:watch": "vitest"
   },

@@ -1,0 +1,26 @@
+diff --git a/schemas/template.schema.json b/schemas/template.schema.json
+index 66c1221..9c23086 100644
+--- a/schemas/template.schema.json
++++ b/schemas/template.schema.json
+@@ -184,6 +184,21 @@
+                 "minLength": 1,
+                 "maxLength": 300
+               },
++              "display_name": {
++                "type": "string",
++                "minLength": 1,
++                "maxLength": 100
++              },
++              "minimum": {
++                "type": "number"
++              },
++              "maximum": {
++                "type": "number"
++              },
++              "placeholder": {
++                "type": "string",
++                "maxLength": 160
++              },
+               "required_environments": {
+                 "type": "array",
+                 "uniqueItems": true,
