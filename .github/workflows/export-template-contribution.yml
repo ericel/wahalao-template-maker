@@ -13,9 +13,6 @@ on:
       version:
         description: Immutable semantic version (blank selects latest)
         required: false
-      submission_id:
-        description: Opaque app-owned submission ID from the Automations console
-        required: true
 
 permissions:
   contents: read
@@ -43,7 +40,6 @@ jobs:
           args=(
             --template-name "${{ inputs.template_name }}"
             --source-commit "${GITHUB_SHA}"
-            --submission-id "${{ inputs.submission_id }}"
             --destination-root contribution
           )
           if [[ -n "${{ inputs.version }}" ]]; then

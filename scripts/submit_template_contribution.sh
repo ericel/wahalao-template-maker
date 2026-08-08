@@ -114,7 +114,7 @@ if [[ -z "$PR_URL" ]]; then
     --base main \
     --head "$SUBMISSION_BRANCH" \
     --title "Submit ${TEMPLATE_NAME} ${TEMPLATE_VERSION}" \
-    --body "Private app-owned template submission for \`weynear/${TEMPLATE_NAME}@${TEMPLATE_VERSION}\` from \`https://github.com/${SOURCE_REPOSITORY}@${SOURCE_COMMIT}\`. The source contains no credentials or tenant identifiers and passed the upstream catalog and adversarial tests.")"
+    --body "Template contribution for \`weynear/${TEMPLATE_NAME}@${TEMPLATE_VERSION}\` from \`https://github.com/${SOURCE_REPOSITORY}@${SOURCE_COMMIT}\`. The source contains no credentials or tenant identifiers and passed the upstream catalog and adversarial tests.")"
 fi
 
 echo

@@ -17,18 +17,17 @@ definitions, including live sports scores and RSS/Atom news publishing.
 
 This app intentionally does not store secrets, credentials, user IDs, bot IDs, recipient lists, or application IDs.
 
-## Private submission workflow
+## Contribution workflow
 
-1. Open `/developer/messaging#automations`, select the owning application, and
-   create a private template submission.
-2. Copy the opaque `atsub_...` identifier into Template Maker. It contains no
-   credentials or tenant IDs; Automation retains the authoritative app binding.
-3. Export the recipe and open a pull request against `weynear-templates`.
-4. After review, central build, signing, and publication, the template appears
-   only in the owning application's Automations catalog.
+1. Author the recipe in Template Maker and commit the template source.
+2. Export the recipe and open a pull request against `weynear-templates`.
+3. After review, central build, signing, and publication, the template appears
+   in the Automations catalog and any eligible application can install it.
 
-Every version requires a new submission. Do not reuse a submission across
-applications or template versions.
+Recipes carry no submission ID and no installation secret. Publisher ownership
+comes from the reviewed publisher record in `weynear-templates` and the source
+repositories registered against it. A recipe still carrying a legacy
+`metadata.submission_id` is rejected at export and by registry CI.
 
 ## Run locally
 
@@ -58,7 +57,7 @@ templates/sports-live-scores/
 templates/news-feed-publisher/
   src/news_feed_publisher/      canonical-link publishing source
   tests/                        source contract tests
-  recipe/1.0.0/                 first private registry candidate
+  recipe/1.1.0/                 public-HTTPS feed registry candidate
   Dockerfile                    OCI artifact definition
 .github/workflows/
   validate.yml                         app and source validation
@@ -75,8 +74,7 @@ The current `sports-live-scores-v1` runtime adapter remains in
 source ownership; it can continue loading the new signed artifact without
 rewriting approved historical recipes.
 
-After committing the app-owned `submission_id` and pushing the source commit,
-submit the recipe with one command:
+After pushing the source commit, submit the recipe with one command:
 
 ```bash
 npm run submit:sports
