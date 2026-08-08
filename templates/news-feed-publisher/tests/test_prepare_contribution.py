@@ -11,8 +11,8 @@ def test_generic_export_selects_news_recipe_and_pins_commit(tmp_path):
     )
 
     template = yaml.safe_load((output / "template.yaml").read_text())
-    assert output.name == "1.0.0"
+    assert output.name == "1.1.0"
     assert template["metadata"]["name"] == "news-feed-publisher"
-    assert template["metadata"]["submission_id"].startswith("atsub_")
+    assert "submission_id" not in template["metadata"]
     assert template["spec"]["source"]["commit"] == "c" * 40
     assert "artifact" not in template["spec"]

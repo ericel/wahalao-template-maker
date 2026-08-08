@@ -1,6 +1,6 @@
 """Publish newly discovered feed entries as canonical links.
 
-The hosted runtime supplies a reviewed RSS/Atom feed through ``ctx.http`` and
+The hosted runtime supplies a configured public RSS/Atom feed through ``ctx.http`` and
 capability-scoped post/state APIs. It retains network credentials and tenant
 identity outside template code. Weynear's post service enriches each canonical
 URL with the same native link-preview pipeline used for user-authored posts.

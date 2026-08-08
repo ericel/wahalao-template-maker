@@ -3,9 +3,9 @@ kind: AutomationTemplate
 metadata:
   publisher: weynear
   name: news-feed-publisher
-  version: 1.0.0
+  version: 1.1.0
   display_name: Breaking News Feed
-  summary: Publish new articles from a reviewed RSS or Atom feed using Weynear's native link previews.
+  summary: Publish new articles from any public HTTPS RSS or Atom feed using Weynear's native link previews.
   status: preview
   license: Apache-2.0
   categories:
@@ -34,8 +34,8 @@ spec:
       type: url
       required: false
       secret: false
-      placeholder: https://feeds.bbci.co.uk/news/rss.xml
-      description: A reviewed BBC News feed URL. Articles are posted by canonical URL and enriched by Weynear.
+      placeholder: https://www.afdb.org/en/news-and-events/rss
+      description: Any public HTTPS RSS or Atom feed URL. Browser-challenge-protected feeds may reject server-side polling.
     - key: MAX_ITEMS_PER_RUN
       display_name: Maximum articles per run
       type: integer

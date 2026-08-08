@@ -32,13 +32,9 @@ function loadDraft(): TemplateDraft {
     const saved = localStorage.getItem(storageKey);
     if (!saved) return structuredClone(initialDraft);
     const parsed = JSON.parse(saved) as TemplateDraft;
-    return {
-      ...parsed,
-      metadata: {
-        ...parsed.metadata,
-        submission_id: parsed.metadata?.submission_id ?? "",
-      },
-    };
+    const { submission_id: _removed, ...metadata } = (parsed.metadata ??
+      {}) as TemplateDraft["metadata"] & { submission_id?: string };
+    return { ...parsed, metadata };
   } catch {
     return structuredClone(initialDraft);
   }
@@ -209,7 +205,6 @@ function App() {
           {section === "identity" ? (
             <section className="panel form-panel">
               <div className="section-title"><span>Catalog identity</span><small>Defines the immutable recipe address.</small></div>
-              <Field label="Private submission ID" hint="Create this in /developer/messaging#automations. It carries no credentials or account identifiers."><input className="mono" value={draft.metadata.submission_id} placeholder="atsub_…" onChange={(e) => updateMetadata("submission_id", e.target.value.trim().toLowerCase())} /></Field>
               <div className="form-grid three">
                 <Field label="Publisher"><input value={draft.metadata.publisher} onChange={(e) => updateMetadata("publisher", e.target.value.toLowerCase())} /></Field>
                 <Field label="Template name"><input value={draft.metadata.name} onChange={(e) => updateMetadata("name", e.target.value.toLowerCase())} /></Field>

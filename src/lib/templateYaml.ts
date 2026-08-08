@@ -12,13 +12,9 @@ export function parseTemplate(source: string): TemplateDraft {
     throw new Error("Template YAML must contain an object.");
   }
   const draft = parsed as TemplateDraft;
-  return {
-    ...draft,
-    metadata: {
-      ...draft.metadata,
-      submission_id: draft.metadata?.submission_id ?? "",
-    },
-  };
+  const { submission_id: _removed, ...metadata } = (draft.metadata ??
+    {}) as TemplateDraft["metadata"] & { submission_id?: string };
+  return { ...draft, metadata };
 }
 
 export function createManifest(draft: TemplateDraft): string {
